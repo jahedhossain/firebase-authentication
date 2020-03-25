@@ -1,24 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import * as firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/firestore";
+
+import firebaseConfig from "./firebase.config";
+firebase.initializeApp(firebaseConfig);
 
 function App() {
+  const [login, setLogin] = useState(false);
+
+  var provider = new firebase.auth.GoogleAuthProvider();
+
+  const handlerLogin = () => {
+    firebase
+      .auth()
+      .signInWithPopup(provider)
+      .then(user => setLogin(true))
+      .catch(err => setLogin(false));
+  };
+  const handlerLogout = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then(user => setLogin(false))
+      .catch(err => setLogin(true));
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {login && <h1> your account login successfully </h1>}
+
+      <button onClick={handlerLogin}>Login </button>
+      <button onClick={handlerLogout}>Logout</button>
     </div>
   );
 }
